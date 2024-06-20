@@ -22,6 +22,8 @@ module Rack
       type   = Rack::Request.new(env).media_type
       parser = match_content_types_for(parsers, type) if type
       return @app.call(env) unless parser
+      # rack.input is optional in Rack 3.1+
+      return @app.call(env) unless env[POST_BODY]
       body = env[POST_BODY].read ; env[POST_BODY].rewind
       return @app.call(env) unless body && !body.empty?
       begin
